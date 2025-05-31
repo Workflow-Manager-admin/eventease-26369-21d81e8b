@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import { AuthForms } from "./AuthForms";
 
 /*
   Color palette provided in the requirements (with names matching for later CSS adaptability):
@@ -12,18 +13,9 @@ import './App.css';
 function App() {
   const [activePage, setActivePage] = useState('home');
   const [isAdmin, setIsAdmin] = useState(false); // Change to simulate admin view
+  const [authUser, setAuthUser] = useState(null); // {username: string}
 
-  // Change active page for navigation & tab simulation
-  // Add auth, admin, etc as needed in future implementation
-
-  // Placeholder components for each main flow:
-  const RegistrationLogin = () => (
-    <div className="placeholder">
-      <h2>User Registration & Login</h2>
-      <p>Form for user sign up and login goes here.</p>
-    </div>
-  );
-
+  // --- Render main content pages
   const BrowseCategories = () => (
     <div className="categories-grid">
       {["Movies", "Travel", "Events", "Sports", "Concerts"].map(cat => (
@@ -91,9 +83,31 @@ function App() {
         </>
       );
     }
+    // If not admin, handle auth
+    if (!authUser && (activePage === "register" || activePage === "mybookings" || activePage === "book" || activePage === "payment")) {
+      // Show login/register page if on protected flows with no user
+      return (
+        <AuthForms
+          mode={activePage === "register" ? "register" : "login"}
+          onAuth={(user) => {
+            setAuthUser(user);
+            // If we explicitly arrived on register route, redirect to browse after login
+            setActivePage(activePage === "register" ? "browse" : activePage);
+          }}
+        />
+      );
+    }
     switch (activePage) {
       case 'register':
-        return <RegistrationLogin />;
+        return (
+          <AuthForms
+            mode="register"
+            onAuth={(user) => {
+              setAuthUser(user);
+              setActivePage("browse");
+            }}
+          />
+        );
       case 'browse':
         return (
           <>
@@ -104,10 +118,17 @@ function App() {
       case 'details':
         return <EventTravelDetails />;
       case 'book':
+        // Only allow booking if logged in
+        if (!authUser) return <AuthForms
+          mode="login"
+          onAuth={u => { setAuthUser(u); setActivePage("book"); }}
+        />;
         return <BookingConfirmation />;
       case 'mybookings':
+        if (!authUser) return <AuthForms mode="login" onAuth={u => { setAuthUser(u); setActivePage("mybookings"); }} />;
         return <ViewCancelBookings />;
       case 'payment':
+        if (!authUser) return <AuthForms mode="login" onAuth={u => { setAuthUser(u); setActivePage("payment"); }} />;
         return <PaymentGateway />;
       default:
         // Home page: categories grid, search/filter, login/register call-to-action
@@ -120,9 +141,26 @@ function App() {
                 Seamlessly search, book, and manage your tickets for movies, travel, concerts, and more – all in one place.
               </div>
               <div style={{ marginBottom: 32 }}>
-                <button className="btn btn-large" onClick={() => setActivePage('register')}>
-                  Register / Login
-                </button>
+                {authUser ? (
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      fontWeight: 600,
+                      fontSize: 18,
+                      background: "rgba(0,173,239,0.07)",
+                      borderRadius: 10,
+                      padding: "8px 16px"
+                    }}
+                  >
+                    <span role="img" aria-label="user">👤</span>Hi, {authUser.username}
+                  </span>
+                ) : (
+                  <button className="btn btn-large" onClick={() => setActivePage('register')}>
+                    Register / Login
+                  </button>
+                )}
               </div>
             </div>
             <SearchFilter />
@@ -136,9 +174,9 @@ function App() {
   const navItems = [
     { label: 'Home', page: 'home' },
     { label: 'Browse', page: 'browse' },
-    { label: 'My Bookings', page: 'mybookings' },
-    { label: 'Admin', page: 'admin', adminOnly: true },
-    { label: 'Register/Login', page: 'register' }
+    { label: 'My Bookings', page: 'mybookings', auth: true },
+    { label: isAdmin ? 'User View' : 'Admin', page: 'admin', adminOnly: true }, // toggle admin
+    { label: authUser ? 'Logout' : 'Register/Login', page: authUser ? 'logout' : 'register' }
   ];
 
   return (
@@ -150,8 +188,10 @@ function App() {
           </div>
           <div style={{ display: "flex", gap: "18px", alignItems: "center" }}>
             {navItems.map(
-              (item, i) =>
-                (!item.adminOnly || isAdmin) && (
+              (item, i) => {
+                if (item.page === "mybookings" && !authUser) return null;
+                if (item.adminOnly && !isAdmin) return null;
+                return (
                   <button
                     key={item.page}
                     className={`btn ${activePage === item.page ? 'btn-active' : ''}`}
@@ -168,16 +208,38 @@ function App() {
                       if (item.page === "admin") {
                         setIsAdmin(val => !val);
                         setActivePage("admin");
-                      } else {
-                        setActivePage(item.page);
-                        if (item.page !== "admin") setIsAdmin(false);
+                        return;
                       }
+                      if (item.page === "logout") {
+                        setAuthUser(null);
+                        setIsAdmin(false);
+                        setActivePage("home");
+                        return;
+                      }
+                      setActivePage(item.page);
+                      if (item.page !== "admin") setIsAdmin(false);
                     }}
                   >
                     {item.label}
                   </button>
-                )
+                );
+              }
             )}
+            {authUser &&
+              <span style={{
+                display: "inline-flex",
+                alignItems: "center",
+                background: "rgba(0,173,239,0.12)",
+                color: "var(--accent)",
+                fontWeight: 500,
+                borderRadius: 99,
+                fontSize: 16,
+                padding: "5px 15px",
+                marginLeft: 8
+              }}>
+                <span role="img" aria-label="user">👤</span> {authUser.username}
+              </span>
+            }
           </div>
         </div>
       </nav>
