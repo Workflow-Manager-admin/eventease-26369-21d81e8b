@@ -4,6 +4,11 @@
   --text-color: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.7);
   --border-color: rgba(255, 255, 255, 0.1);
+
+  /* EventEase palette */
+  --primary: #101820;
+  --secondary: #0057B8;
+  --accent: #00ADEF;
 }
 
 body {
