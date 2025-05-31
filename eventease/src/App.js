@@ -3,6 +3,35 @@ import './App.css';
 import { AuthForms } from "./AuthForms";
 
 /*
+  Extension for: Category card selection, Travel subcategory modal, Booking Form, My Bookings page.
+
+  - Categories: Movies, Travel (submenu: Train, Flight, Bus, Cab), Events, Sports, Concerts
+  - Selecting a category routes to a booking form; submission stores details locally per user, then goes to "My Bookings".
+  - My Bookings: list all user's bookings, with cancel (remove) support.
+*/
+
+// Travel subcategories
+const TRAVEL_SUBCATEGORIES = ["Train", "Flight", "Bus", "Cab"];
+
+// Booking "purposes" for generalization
+const CATEGORY_ICONS = {
+  Movies: "🎬",
+  Travel: "🌍",
+  Events: "🎫",
+  Sports: "⚽",
+  Concerts: "🎵"
+};
+const CATEGORY_CHOICES = ["Movies", "Travel", "Events", "Sports", "Concerts"];
+const TRAVEL_CATEGORY_TITLE = "Travel";
+const ALL_PURPOSES = [
+  "Movies",
+  ...TRAVEL_SUBCATEGORIES.map(t => `Travel:${t}`),
+  "Events",
+  "Sports",
+  "Concerts"
+];
+
+/*
   Color palette provided in the requirements (with names matching for later CSS adaptability):
     --primary: #101820;
     --secondary: #0057B8;
