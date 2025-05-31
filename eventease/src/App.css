@@ -111,3 +111,112 @@ body {
   padding: 12px 24px;
   font-size: 1.1rem;
 }
+
+/* --- EventEase Custom Styles --- */
+
+/* Category cards grid */
+.categories-grid {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  margin: 36px 0 16px 0;
+  width: 100%;
+}
+.category-card {
+  background: var(--secondary);
+  color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px 0 rgba(16,24,32,0.09);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 0 24px 0;
+  transition: box-shadow .22s cubic-bezier(.59,-0.31,.89,1.19),transform .15s;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+.category-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 4px 24px 0 rgba(0, 173, 239, .21);
+  background: var(--accent);
+}
+.category-icon {
+  font-size: 2.8rem;
+  margin-bottom: 14px;
+  color: var(--accent);
+}
+.category-title {
+  letter-spacing: 0.01em;
+  font-size: 1.34rem;
+}
+
+/* Search & Filter */
+.search-filter-panel {
+  display: flex;
+  gap: 16px;
+  margin: 18px 0 0 0;
+  align-items: center;
+  justify-content: flex-start;
+}
+.search-input {
+  padding: 9px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  font-size: 1rem;
+  width: 250px;
+  background: #fff;
+  color: var(--primary);
+  margin-right: 6px;
+}
+.filter-select {
+  padding: 9px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  font-size: 1rem;
+  background: #fff;
+  color: var(--primary);
+}
+
+/* Placeholders for unfinished features */
+.placeholder {
+  background: #f8fafb;
+  color: #101820;
+  border: 1.5px dashed var(--accent);
+  border-radius: 8px;
+  padding: 36px 28px;
+  margin: 28px 0;
+  text-align: center;
+  opacity: 0.93;
+}
+.placeholder h2 {
+  color: var(--secondary);
+  margin-bottom: 12px;
+}
+
+/* Override .btn for EventEase navigation, accent on hover */
+.btn {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: 1px solid var(--secondary);
+}
+.btn:hover, .btn.btn-active {
+  background-color: var(--secondary);
+}
+
+@media (max-width: 600px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+  .navbar .container {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+}
